@@ -209,12 +209,10 @@ const LineHeightShowcase = () => (
       <Code>leading</Code>, <Code>baseline</Code>의 관계를 시각적으로 이해하기
       위한 예시입니다.
     </Text>
-
+    {/* 개념 표: 항상 전체폭 */}
+    <ConceptBox />
     {/* 카드 그리드: Flex 래핑 + 반응형 너비 (1열 → 2열 → 3열) */}
     <Flex gap="lg" wrap="wrap" justify="center" w="100%">
-      {/* 개념 표: 항상 전체폭 */}
-      <ConceptBox />
-      <p>aaaaaa</p>
       {/* ① height만 지정 */}
       <Box w={{ base: "100%", sm: "50%", lg: "33.333%" }}>
         <ExampleCard
@@ -345,16 +343,16 @@ const LineHeightShowcase = () => (
         <BaselineDemo />
       </Box>
 
-      {/* ⑥ 폰트 크기와 줄 높이를 다르게 설정하는 이유 (Leading 확보) */}
+      {/* ⑥ 폰트 크기에 따라 line-height 비율 조정 */}
       <Box w={{ base: "100%", sm: "50%", lg: "33.333%" }}>
         <ExampleCard
-          title="⑥ 폰트 크기와 줄 높이를 다르게 설정하는 이유 (Leading 확보)"
+          title="⑥ 폰트 크기에 따라 line-height 비율 조정"
           desc={
             <>
-              디자이너는 줄 간에 <b>시각적 여백(leading)</b>을 주어 글이 답답해
-              보이지 않도록 합니다. <Code>font-size</Code>보다{" "}
-              <Code>line-height</Code>를 살짝 크게 설정하면, 글자 위아래로
-              균형감 있는 공간이 생기며 가독성이 향상됩니다.
+              폰트 크기에 따라 <Code>line-height</Code> 비율은 달라집니다.{" "}
+              <br />
+              작은 글자는 읽기 편하도록 줄 간 여백을 넉넉히(1.6~1.8), 큰 글자는
+              시각적 안정감을 위해 촘촘히(1.2~1.4) 설정하는 것이 일반적입니다.
             </>
           }
           demo={
@@ -364,14 +362,17 @@ const LineHeightShowcase = () => (
               p="sm"
               style={{ borderRadius: 8, overflow: "visible" }}
             >
-              <Text size="sm" lh="1rem">
-                line-height = 1rem (여백 없음)
+              <Text size="xs" lh={1.8}>
+                font-size: xs, lh=1.8 → 작은 글자는 여백 많게
               </Text>
-              <Text size="sm" lh="1.375rem">
-                line-height ≈ font-size보다 약간 큼 (적당한 여백)
+              <Text size="sm" lh={1.6}>
+                font-size: sm, lh=1.6 → 일반 본문 수준
               </Text>
-              <Text size="sm" lh="1.6rem">
-                line-height 더 큼 (여백 많고 부드러움)
+              <Text size="lg" lh={1.4}>
+                font-size: lg, lh=1.4 → 중간 제목용
+              </Text>
+              <Text size="xl" lh={1.2}>
+                font-size: xl, lh=1.2 → 큰 제목은 단단하게
               </Text>
             </Flex>
           }
