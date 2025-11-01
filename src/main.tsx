@@ -7,23 +7,29 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import { Loader, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import ModalStackManager from "@/components/ModalStackManager";
+import DrawerStackManager from "@/components/DrawerStackManager";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <MantineProvider withGlobalClasses withStaticClasses>
         <Suspense fallback={<Loader />}>
-          <Notifications position="top-center" />
-          <Routes>
-            {routePaths.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <ModalStackManager>
+            <DrawerStackManager>
+              <Notifications position="top-center" />
+              <Routes>
+                {routePaths.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </DrawerStackManager>
+          </ModalStackManager>
         </Suspense>
       </MantineProvider>
     </BrowserRouter>
