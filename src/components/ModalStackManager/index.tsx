@@ -1,4 +1,4 @@
-import { CloseButton, Modal, Portal } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import React, { useState } from "react";
 import { ModalContext } from "@/hooks/useModal";
 
@@ -61,71 +61,44 @@ const ModalStackManager: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ModalContext.Provider value={{ openModal, closeModal }}>
       {children}
-      <Portal>
-        {modalStack.map((modalProps, index) => (
-          <Modal.Root
-            opened={true}
-            removeScrollProps={{ allowPinchZoom: true }}
-            onClose={closeModal}
-            // title={modalProps.title}
-            centered
-            size={modalProps.options?.size ?? "auto"}
-            key={index}
-            zIndex={2000 + index}
-            closeOnClickOutside={!modalProps.options?.closeOnClickOutside} // true일 경우 닫히지 않고 false일 경우 닫힘
-            styles={{
-              content: {
-                borderRadius: "0.75rem",
-                boxShadow: "0px 0px 20px 3px rgba(0, 0, 0, 0.12)",
-              },
-              header: {
-                display: "flex",
-                width: "100%",
-                paddingLeft: "1rem",
-                paddingRight: "1rem",
-                paddingTop: "0px",
-                paddingBottom: "0px",
-                minHeight: "3.5rem",
-                height: "3.5rem",
-              },
-              body: {
-                display: "flex",
-                flex: 1,
-                padding: "0px",
-                width: "100%",
-              },
-              title: {
-                width: "100%",
-              },
-            }}
-          >
-            <Modal.Overlay />
-            <Modal.Content>
-              {!modalProps.options?.isNotTitle && (
-                <Modal.Header w="100%" px="1rem" py="1.125rem">
-                  <Modal.Title c="gray.9" ff="MBK CorpoA" fz="1.25rem">
-                    {modalProps.title}
-                  </Modal.Title>
-                  {!modalProps.options?.isCloseButton && (
-                    <Modal.CloseButton
-                      w="1.5rem"
-                      h="1.5rem"
-                      miw="1.5rem"
-                      mih="1.5rem"
-                      iconSize="1.5rem"
-                      fw={700}
-                      c="black"
-                      onClick={modalProps.onClose}
-                      icon={<CloseButton />}
-                    />
-                  )}
-                </Modal.Header>
-              )}
-              <Modal.Body>{modalProps.component}</Modal.Body>
-            </Modal.Content>
-          </Modal.Root>
-        ))}
-      </Portal>
+      {modalStack.map((modalProps, index) => (
+        <Modal.Root
+          opened={true}
+          removeScrollProps={{ allowPinchZoom: true }}
+          onClose={closeModal}
+          centered
+          yOffset={0}
+          xOffset={0}
+          size={modalProps.options?.size ?? "auto"}
+          key={index}
+          zIndex={2000 + index}
+          // 옵션이 명시되지 않으면 기본값(true)으로 바깥 클릭 시 닫습니다.
+          closeOnClickOutside={modalProps.options?.closeOnClickOutside ?? true}
+        >
+          <Modal.Overlay />
+          <Modal.Content>
+            {!modalProps.options?.isNotTitle && (
+              <Modal.Header w="100%" px="1rem" py="1.125rem">
+                <Modal.Title
+                  c="gray.9"
+                  fz="1.25rem"
+                  w="100%"
+                  ta={
+                    modalProps.options?.isTitleCentered ? "center" : undefined
+                  }
+                >
+                  {modalProps.title}
+                </Modal.Title>
+                {!modalProps.options?.isCloseButton && (
+                  // Mantine v8: CloseButton은 자체적으로 Modal onClose를 호출합니다.
+                  <Modal.CloseButton />
+                )}
+              </Modal.Header>
+            )}
+            <Modal.Body>{modalProps.component}</Modal.Body>
+          </Modal.Content>
+        </Modal.Root>
+      ))}
     </ModalContext.Provider>
   );
 };
