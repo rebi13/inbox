@@ -1,38 +1,18 @@
-import { StrictMode, Suspense } from "react";
+// main.tsx
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "@/index.css";
-import routePaths from "@/router/index.tsx";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
-import { MantineProvider } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
-import ModalStackManager from "@/components/ModalStackManager";
-import DrawerStackManager from "@/components/DrawerStackManager";
-import { Loading } from "@/components/common/Loading";
+import "@/index.css";
 
-createRoot(document.getElementById("root")!).render(
+import App from "@/App"; // 혹은 "@/App" (프로젝트 alias 설정에 맞춰서)
+
+createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <BrowserRouter>
-      <MantineProvider withGlobalClasses withStaticClasses>
-        <Suspense fallback={<Loading />}>
-          <ModalStackManager>
-            <DrawerStackManager>
-              <Notifications position="top-center" />
-              <Routes>
-                {routePaths.map((route) => (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={route.element}
-                  />
-                ))}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </DrawerStackManager>
-          </ModalStackManager>
-        </Suspense>
-      </MantineProvider>
+      <App />
     </BrowserRouter>
   </StrictMode>,
 );
