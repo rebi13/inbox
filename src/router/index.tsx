@@ -12,7 +12,7 @@ const EventPropagationPage = lazy(() => import("@/pages/js/EventPropagation"));
 
 const routePaths = [
   // home
-  { path: "/", elment: <HomePage /> },
+  { path: "/", element: <HomePage /> },
   // css
   { path: "/lineheight-showcase", element: <LineHeightShowcasePage /> },
 

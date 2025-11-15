@@ -8,6 +8,7 @@ import routePaths from "@/router"; // 기존 "@/router/index.tsx" 라면 거기�
 import ModalStackManager from "@/components/ModalStackManager";
 import DrawerStackManager from "@/components/DrawerStackManager";
 import { Loading } from "@/components/common/Loading";
+import Layout from "@/layouts";
 
 function App() {
   return (
@@ -18,16 +19,19 @@ function App() {
             <Notifications position="top-center" />
 
             <Routes>
-              {routePaths.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
-              ))}
+              {/* 모든 라우트를 Layout으로 감싸서 Outlet이 렌더링되도록 구성 */}
+              <Route element={<Layout />}>
+                {routePaths.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
 
-              {/* 존재하지 않는 path 대응 */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+                {/* 존재하지 않는 path 대응 */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Route>
             </Routes>
           </DrawerStackManager>
         </ModalStackManager>
