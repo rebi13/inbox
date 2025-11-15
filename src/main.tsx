@@ -5,16 +5,17 @@ import routePaths from "@/router/index.tsx";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
-import { Loader, MantineProvider } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import ModalStackManager from "@/components/ModalStackManager";
 import DrawerStackManager from "@/components/DrawerStackManager";
+import { Loading } from "@/components/common/Loading";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <MantineProvider withGlobalClasses withStaticClasses>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<Loading />}>
           <ModalStackManager>
             <DrawerStackManager>
               <Notifications position="top-center" />
