@@ -1,5 +1,6 @@
 import { Box, NavLink, ScrollArea, Stack, Text } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
+import type { ReactNode } from "react";
 import {
   IconBrandJavascript,
   IconBrandCss3,
@@ -16,12 +17,12 @@ import {
 type MenuItem = {
   label: string;
   path: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 };
 
 type MenuCategory = {
   category: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   color: string;
   items: MenuItem[];
 };

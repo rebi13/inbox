@@ -1,10 +1,11 @@
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
+import type { ReactNode } from "react";
 
 export type DrawerContextType = {
   openDrawer: (
-    component: React.ReactNode,
+    component: ReactNode,
     parameter: unknown,
-    title: string | React.ReactNode,
+    title: string | ReactNode,
     options?: {
       isTitleCentered?: boolean;
       isDrawerFullSize?: boolean;

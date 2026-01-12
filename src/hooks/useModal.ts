@@ -1,10 +1,11 @@
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
+import type { ReactNode } from "react";
 
 export type ModalContextType = {
   openModal: (
-    component: React.ReactNode,
+    component: ReactNode,
     parameter: unknown,
-    title: string | React.ReactNode,
+    title: string | ReactNode,
     options?: {
       size?: string | number;
       isTitleCentered?: boolean;
@@ -27,4 +28,3 @@ export const useModal = (): ModalContextType => {
   }
   return modalContext;
 };
-

@@ -1,12 +1,13 @@
 import { Modal } from "@mantine/core";
-import React, { useState } from "react";
+import { useState } from "react";
+import type { FC, ReactNode } from "react";
 import { ModalContext } from "@/hooks/useModal";
 
 type ModalProps = {
-  component: React.ReactNode; // 모달로 사용될 컴포넌트
+  component: ReactNode; // 모달로 사용될 컴포넌트
   parameter: unknown; // 전달할 파라미터
   opened: boolean; // 모달이 열려있는지 여부
-  title: string | React.ReactNode; // 모달의 타이틀
+  title: string | ReactNode; // 모달의 타이틀
   onClose: (result?: unknown) => void; // 모달이 닫힐 때 실행할 콜백 함수
   options?: {
     size?: string | number; // 모달의 크기
@@ -19,15 +20,15 @@ type ModalProps = {
 
 // Context and hook are defined in ./context to satisfy react-refresh rule
 
-const ModalStackManager: React.FC<{ children: React.ReactNode }> = ({
+const ModalStackManager: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [modalStack, setModalStack] = useState<ModalProps[]>([]);
 
   const openModal = (
-    component: React.ReactNode,
+    component: ReactNode,
     parameter: unknown,
-    title: string | React.ReactNode,
+    title: string | ReactNode,
     options?: {
       size?: string | number;
       isTitleCentered?: boolean;

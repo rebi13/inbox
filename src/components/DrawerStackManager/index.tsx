@@ -1,12 +1,13 @@
 import { CloseIcon, Drawer, Portal, Text } from "@mantine/core";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { FC, ReactNode } from "react";
 import { DrawerContext } from "../../hooks/useDrawer";
 
 type DrawerProps = {
-  component: React.ReactNode;
+  component: ReactNode;
   parameter: unknown;
   opened: boolean;
-  title: string | React.ReactNode;
+  title: string | ReactNode;
   onClose: (result?: unknown) => void;
   options?: {
     isTitleCentered?: boolean; // 제목을 중앙 정렬할지 여부
@@ -20,7 +21,7 @@ type DrawerProps = {
 
 const TRANSITION_DURATION = 200;
 
-const DrawerStackManager: React.FC<{ children: React.ReactNode }> = ({
+const DrawerStackManager: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [drawerStack, setDrawerStack] = useState<DrawerProps[]>([]);
@@ -32,9 +33,9 @@ const DrawerStackManager: React.FC<{ children: React.ReactNode }> = ({
   }, [drawerStack]);
 
   const openDrawer = (
-    component: React.ReactNode,
+    component: ReactNode,
     parameter: unknown,
-    title: string | React.ReactNode,
+    title: string | ReactNode,
     options?: {
       isTitleCentered?: boolean;
       isDrawerFullSize?: boolean;

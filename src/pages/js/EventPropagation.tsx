@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useCallback } from "react";
+import type { MouseEvent } from "react";
 import {
   Paper,
   Group,
@@ -66,7 +67,7 @@ const DemoSection = ({
   const currentBatchIdRef = useRef<number | null>(null);
   const lastBatchIdRef = useRef<number>(0);
 
-  const ensureBatchForEvent = useCallback((e: React.MouseEvent) => {
+  const ensureBatchForEvent = useCallback((e: MouseEvent) => {
     if (currentBatchIdRef.current != null) return currentBatchIdRef.current;
     const targetEl = e.target as HTMLElement | null;
     const area = targetEl?.closest("[data-area]") as HTMLElement | null;
@@ -124,7 +125,7 @@ const DemoSection = ({
 
   const handlers = useMemo(() => {
     const makeHandlers = (label: "Outer" | "Middle" | "Inner") => ({
-      onClickCapture: (e: React.MouseEvent) => {
+      onClickCapture: (e: MouseEvent) => {
         if (label === "Outer") {
           ensureBatchForEvent(e);
         }
@@ -136,7 +137,7 @@ const DemoSection = ({
         }
         appendStep("Capture", label);
       },
-      onClick: (e: React.MouseEvent) => {
+      onClick: (e: MouseEvent) => {
         if (label === "Middle" && stopOnMiddleBubble) {
           appendStep("Bubble", `${label}`, true);
           e.stopPropagation();

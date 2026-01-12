@@ -1,4 +1,5 @@
-import React from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import {
   Flex,
   Text,
@@ -78,8 +79,8 @@ const ExampleCard = ({
   demo,
 }: {
   title: string;
-  desc: React.ReactNode;
-  demo: React.ReactNode;
+  desc: ReactNode;
+  demo: ReactNode;
 }) => (
   <Card withBorder shadow="sm" radius="lg" p="md" w="100%">
     <Stack gap="sm">
@@ -104,7 +105,7 @@ const ExampleCard = ({
 
 /* ────────────────────────────── 🩵 ⑤ Baseline 시각화 (슬라이더 포함) ────────────────────────────── */
 const BaselineDemo = () => {
-  const [baselinePct, setBaselinePct] = React.useState(30);
+  const [baselinePct, setBaselinePct] = useState(30);
 
   return (
     <Card withBorder shadow="sm" radius="lg" p="md" w="100%">
