@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => ({
     }),
   ],
   resolve: {
+    dedupe: ['react', 'react-dom'],
     alias: {
       // Map `@` to the project `src` directory
       "@": fileURLToPath(new URL("./src", import.meta.url)),
