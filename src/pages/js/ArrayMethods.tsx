@@ -83,6 +83,11 @@ const ArrayMethodsPage = () => {
           <Group gap="xl">
             <List size="sm" spacing="xs">
               <List.Item>
+                <Anchor href="#copy">
+                  복사 개념 (얕은 복사 vs 깊은 복사)
+                </Anchor>
+              </List.Item>
+              <List.Item>
                 <Anchor href="#iteration">순회 메서드 (forEach, map)</Anchor>
               </List.Item>
               <List.Item>
@@ -121,6 +126,350 @@ const ArrayMethodsPage = () => {
             </List>
           </Group>
         </Paper>
+
+        {/* ===== 복사 개념 ===== */}
+        <Box id="copy">
+          <Title order={2} mb="md">
+            0. 복사 개념 (얕은 복사 vs 깊은 복사)
+          </Title>
+
+          <Alert color="violet" variant="light" mb="md">
+            <Text size="sm">
+              배열 메서드를 사용할 때 <strong>얕은 복사(Shallow Copy)</strong>와{" "}
+              <strong>깊은 복사(Deep Copy)</strong>의 차이를 이해하는 것은 매우
+              중요합니다. 특히 중첩된 객체나 배열을 다룰 때 예기치 않은 버그를
+              방지할 수 있습니다.
+            </Text>
+          </Alert>
+
+          <Section
+            title="원시값 vs 참조값"
+            description="JavaScript의 데이터 타입에 따라 복사 방식이 달라집니다."
+            mutates={false}
+          >
+            <Code block>{`// 원시값(Primitive): 값 자체가 복사됨
+let a = 10;
+let b = a;
+b = 20;
+console.log(a); // 10 (영향 없음)
+console.log(b); // 20
+
+// 참조값(Reference): 메모리 주소가 복사됨
+const arr1 = [1, 2, 3];
+const arr2 = arr1; // 같은 배열을 가리킴!
+arr2.push(4);
+console.log(arr1); // [1, 2, 3, 4] (원본도 변경됨!)
+console.log(arr2); // [1, 2, 3, 4]
+
+// 객체도 마찬가지
+const obj1 = { name: "Kim" };
+const obj2 = obj1;
+obj2.name = "Lee";
+console.log(obj1.name); // "Lee" (원본도 변경됨!)`}</Code>
+          </Section>
+
+          <Section
+            title="얕은 복사 (Shallow Copy)"
+            description="1단계 깊이만 복사합니다. 중첩된 객체/배열은 여전히 참조를 공유합니다."
+            mutates={false}
+          >
+            <Code block>{`// 1. 스프레드 연산자 (Spread Operator)
+const original = [1, 2, 3];
+const copy1 = [...original];
+copy1.push(4);
+console.log(original); // [1, 2, 3] (원본 유지)
+console.log(copy1);    // [1, 2, 3, 4]
+
+// 2. slice()
+const copy2 = original.slice();
+
+// 3. Array.from()
+const copy3 = Array.from(original);
+
+// 4. concat()
+const copy4 = [].concat(original);
+
+// 5. Object.assign() - 객체의 경우
+const obj = { a: 1, b: 2 };
+const objCopy = Object.assign({}, obj);
+
+// ⚠️ 얕은 복사의 한계: 중첩된 참조값
+const nested = [
+  { id: 1, name: "Kim" },
+  { id: 2, name: "Lee" }
+];
+const shallowCopy = [...nested];
+
+// 1단계는 독립적
+shallowCopy.push({ id: 3, name: "Park" });
+console.log(nested.length);      // 2 (영향 없음)
+console.log(shallowCopy.length); // 3
+
+// ⚠️ 하지만 내부 객체는 같은 참조!
+shallowCopy[0].name = "Changed";
+console.log(nested[0].name);      // "Changed" (원본도 변경됨!)
+console.log(shallowCopy[0].name); // "Changed"`}</Code>
+            <Alert color="red" variant="light" mt="sm">
+              <Text size="sm">
+                <strong>주의:</strong> 얕은 복사는 1단계만 복사합니다. 배열 안에
+                객체나 배열이 있으면 그 내부는 여전히 같은 참조를 공유합니다!
+              </Text>
+            </Alert>
+          </Section>
+
+          <Section
+            title="깊은 복사 (Deep Copy)"
+            description="모든 중첩 레벨을 완전히 새로운 복사본으로 만듭니다."
+            mutates={false}
+          >
+            <Code block>{`// 1. JSON.parse + JSON.stringify (간단하지만 제한 있음)
+const original = [
+  { id: 1, data: { value: 100 } },
+  { id: 2, data: { value: 200 } }
+];
+
+const deepCopy1 = JSON.parse(JSON.stringify(original));
+deepCopy1[0].data.value = 999;
+console.log(original[0].data.value);  // 100 (원본 유지!)
+console.log(deepCopy1[0].data.value); // 999
+
+// ⚠️ JSON 방식의 한계
+const withFunction = {
+  name: "Kim",
+  greet: function() { return "Hello"; }, // 함수 제거됨
+  date: new Date(),                       // 문자열로 변환
+  undef: undefined,                       // 제거됨
+  nan: NaN,                               // null로 변환
+  infinity: Infinity,                     // null로 변환
+  regex: /test/g                          // 빈 객체로 변환
+};
+
+const jsonCopy = JSON.parse(JSON.stringify(withFunction));
+console.log(jsonCopy);
+// { name: "Kim", date: "2024-01-01T...", nan: null, infinity: null, regex: {} }
+
+// 2. structuredClone() - 모던 브라우저/Node.js 17+ (권장!)
+const original2 = [
+  { id: 1, items: [1, 2, 3], date: new Date() }
+];
+
+const deepCopy2 = structuredClone(original2);
+deepCopy2[0].items.push(4);
+deepCopy2[0].date.setFullYear(2000);
+
+console.log(original2[0].items); // [1, 2, 3] (원본 유지!)
+console.log(deepCopy2[0].items); // [1, 2, 3, 4]
+
+// structuredClone의 한계: 함수, Symbol, DOM 노드는 복사 불가
+
+// 3. 재귀 함수로 직접 구현
+function deepClone<T>(obj: T): T {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClone(item)) as T;
+  }
+
+  const cloned = {} as T;
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      cloned[key] = deepClone(obj[key]);
+    }
+  }
+  return cloned;
+}
+
+// 4. 라이브러리 사용 (lodash)
+// import cloneDeep from 'lodash/cloneDeep';
+// const deepCopy = cloneDeep(original);`}</Code>
+            <Alert color="green" variant="light" mt="sm">
+              <Text size="sm">
+                <strong>권장:</strong> 모던 환경에서는{" "}
+                <Code>structuredClone()</Code>을 사용하세요. 대부분의 경우를
+                처리하며, JSON 방식보다 안전합니다.
+              </Text>
+            </Alert>
+          </Section>
+
+          <Section
+            title="배열 메서드와 복사"
+            description="각 배열 메서드가 어떤 복사를 수행하는지 이해해야 합니다."
+            mutates={false}
+          >
+            <Code block>{`// ✅ 새 배열을 반환하지만 "얕은 복사"
+const users = [
+  { id: 1, name: "Kim" },
+  { id: 2, name: "Lee" }
+];
+
+// map - 새 배열 반환 (얕은 복사)
+const mapped = users.map(user => user);
+mapped[0].name = "Changed";
+console.log(users[0].name); // "Changed" (원본도 변경!)
+
+// filter - 새 배열 반환 (얕은 복사)
+const filtered = users.filter(user => user.id === 1);
+filtered[0].name = "Filtered";
+console.log(users[0].name); // "Filtered" (원본도 변경!)
+
+// slice - 새 배열 반환 (얕은 복사)
+const sliced = users.slice();
+sliced[0].name = "Sliced";
+console.log(users[0].name); // "Sliced" (원본도 변경!)
+
+// ✅ 안전하게 복사하면서 변환하기
+const safeMap = users.map(user => ({ ...user }));
+safeMap[0].name = "Safe";
+console.log(users[0].name); // "Sliced" (원본 유지!)
+
+// 중첩이 더 깊다면 structuredClone 사용
+const deepUsers = [
+  { id: 1, profile: { name: "Kim", address: { city: "Seoul" } } }
+];
+const safeCopy = structuredClone(deepUsers);
+safeCopy[0].profile.address.city = "Busan";
+console.log(deepUsers[0].profile.address.city); // "Seoul" (원본 유지!)`}</Code>
+          </Section>
+
+          <Section
+            title="React 상태 관리에서의 복사"
+            description="React에서 불변성을 유지하며 상태를 업데이트하는 패턴입니다."
+            mutates={false}
+          >
+            <Code block>{`// ❌ 잘못된 예: 직접 수정
+const [users, setUsers] = useState([
+  { id: 1, name: "Kim" },
+  { id: 2, name: "Lee" }
+]);
+
+// 이렇게 하면 React가 변경을 감지하지 못함!
+const updateWrong = () => {
+  users[0].name = "Changed";
+  setUsers(users); // 같은 참조이므로 리렌더 안됨
+};
+
+// ✅ 올바른 예: 새 참조 생성
+const updateCorrect = () => {
+  setUsers(users.map(user =>
+    user.id === 1 ? { ...user, name: "Changed" } : user
+  ));
+};
+
+// ✅ 배열에 항목 추가
+const addUser = () => {
+  setUsers([...users, { id: 3, name: "Park" }]);
+};
+
+// ✅ 배열에서 항목 제거
+const removeUser = (id: number) => {
+  setUsers(users.filter(user => user.id !== id));
+};
+
+// ✅ 중첩된 상태 업데이트
+const [state, setState] = useState({
+  user: {
+    profile: {
+      name: "Kim",
+      settings: { theme: "dark" }
+    }
+  }
+});
+
+const updateTheme = () => {
+  setState({
+    ...state,
+    user: {
+      ...state.user,
+      profile: {
+        ...state.user.profile,
+        settings: {
+          ...state.user.profile.settings,
+          theme: "light"
+        }
+      }
+    }
+  });
+
+  // 또는 Immer 라이브러리 사용
+  // produce(state, draft => {
+  //   draft.user.profile.settings.theme = "light";
+  // });
+};`}</Code>
+            <Alert color="blue" variant="light" mt="sm">
+              <Text size="sm">
+                <strong>면접 포인트:</strong> React에서 상태를 직접 수정하면 안
+                되는 이유는? → 같은 참조이면 React가 변경을 감지하지 못해
+                리렌더링이 발생하지 않습니다.
+              </Text>
+            </Alert>
+          </Section>
+
+          <Paper withBorder p="md" radius="md" bg="gray.0">
+            <Title order={4} mb="sm">
+              복사 방법 비교표
+            </Title>
+            <Table striped highlightOnHover withTableBorder>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>방법</Table.Th>
+                  <Table.Th>복사 깊이</Table.Th>
+                  <Table.Th>함수 복사</Table.Th>
+                  <Table.Th>Date 복사</Table.Th>
+                  <Table.Th>성능</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                <Table.Tr>
+                  <Table.Td>
+                    <Code>[...arr]</Code>
+                  </Table.Td>
+                  <Table.Td>얕은</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>빠름</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td>
+                    <Code>slice()</Code>
+                  </Table.Td>
+                  <Table.Td>얕은</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>빠름</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td>
+                    <Code>JSON.parse/stringify</Code>
+                  </Table.Td>
+                  <Table.Td>깊은</Table.Td>
+                  <Table.Td>❌</Table.Td>
+                  <Table.Td>❌ (문자열)</Table.Td>
+                  <Table.Td>느림</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td>
+                    <Code>structuredClone()</Code>
+                  </Table.Td>
+                  <Table.Td>깊은</Table.Td>
+                  <Table.Td>❌</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>보통</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td>
+                    <Code>lodash cloneDeep</Code>
+                  </Table.Td>
+                  <Table.Td>깊은</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>✅</Table.Td>
+                  <Table.Td>보통</Table.Td>
+                </Table.Tr>
+              </Table.Tbody>
+            </Table>
+          </Paper>
+        </Box>
 
         {/* ===== 순회 메서드 ===== */}
         <Box id="iteration">
@@ -924,6 +1273,11 @@ console.log(original); // [3, 1, 4, 1, 5]`}</Code>
         <Alert color="yellow" title="면접 핵심 포인트" variant="light">
           <List type="ordered" spacing="sm">
             <List.Item>
+              <strong>얕은 복사 vs 깊은 복사 차이점?</strong>
+              <br />→ 얕은 복사는 1단계만, 깊은 복사는 모든 중첩 레벨을 복사.
+              중첩 객체가 있으면 얕은 복사 시 참조를 공유함.
+            </List.Item>
+            <List.Item>
               <strong>map vs forEach 차이점?</strong>
               <br />→ map은 새 배열 반환, forEach는 undefined 반환. map은 체이닝
               가능.
@@ -947,6 +1301,13 @@ console.log(original); // [3, 1, 4, 1, 5]`}</Code>
               <strong>reduce로 map, filter 구현할 수 있나요?</strong>
               <br />→ 네! reduce는 가장 강력한 메서드로 다른 메서드들을 모두 구현
               가능.
+            </List.Item>
+            <List.Item>
+              <strong>
+                배열을 복사할 때 [...arr]를 사용하면 깊은 복사가 되나요?
+              </strong>
+              <br />→ 아니요, 얕은 복사입니다. 깊은 복사가 필요하면
+              structuredClone()이나 JSON.parse(JSON.stringify())를 사용하세요.
             </List.Item>
           </List>
         </Alert>
