@@ -12,7 +12,13 @@ import {
   Box,
   Container,
   Group,
+  Affix,
+  Transition,
+  ActionIcon,
+  rem,
 } from "@mantine/core";
+import { useWindowScroll } from "@mantine/hooks";
+import { IconArrowUp } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
 type SectionProps = {
@@ -40,6 +46,8 @@ const Section = ({ title, description, mutates, children }: SectionProps) => (
 );
 
 const ArrayMethodsPage = () => {
+  const [scroll, scrollTo] = useWindowScroll();
+
   const tableData = [
     ["forEach", "undefined", "X", "단순 순회"],
     ["map", "새 배열", "X", "변환"],
@@ -80,51 +88,41 @@ const ArrayMethodsPage = () => {
           <Title order={4} mb="sm">
             목차
           </Title>
-          <Group gap="xl">
-            <List size="sm" spacing="xs">
-              <List.Item>
-                <Anchor href="#copy">
-                  복사 개념 (얕은 복사 vs 깊은 복사)
-                </Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#iteration">순회 메서드 (forEach, map)</Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#search">
-                  검색 메서드 (find, filter, includes)
-                </Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#reduce">축소 메서드 (reduce)</Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#check">검사 메서드 (some, every)</Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#transform">변환 메서드 (flat, flatMap)</Anchor>
-              </List.Item>
-            </List>
-            <List size="sm" spacing="xs">
-              <List.Item>
-                <Anchor href="#extract">추출/조작 (slice, splice)</Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#combine">결합 메서드 (concat, join)</Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#order">정렬 메서드 (sort, reverse)</Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#stack">
-                  스택/큐 (push, pop, shift, unshift)
-                </Anchor>
-              </List.Item>
-              <List.Item>
-                <Anchor href="#other">기타 유용한 메서드</Anchor>
-              </List.Item>
-            </List>
-          </Group>
+          <List type="ordered" size="sm" spacing="xs">
+            <List.Item>
+              <Anchor href="#copy">복사 개념 (얕은 복사 vs 깊은 복사)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#iteration">순회 메서드 (forEach, map)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#search">검색 메서드 (find, filter, includes)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#reduce">축소 메서드 (reduce)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#check">검사 메서드 (some, every)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#transform">변환 메서드 (flat, flatMap)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#extract">추출/조작 (slice, splice)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#combine">결합 메서드 (concat, join)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#order">정렬 메서드 (sort, reverse)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#stack">스택/큐 (push, pop, shift, unshift)</Anchor>
+            </List.Item>
+            <List.Item>
+              <Anchor href="#other">기타 유용한 메서드</Anchor>
+            </List.Item>
+          </List>
         </Paper>
 
         {/* ===== 복사 개념 ===== */}
@@ -1328,6 +1326,23 @@ console.log(myFilter([1, 2, 3, 4], x => x > 2));  // [3, 4]`}</Code>
           이 페이지가 JavaScript 배열 메서드 학습에 도움이 되길 바랍니다!
         </Text>
       </Stack>
+
+      <Affix position={{ bottom: 20, right: 20 }}>
+        <Transition transition="slide-up" mounted={scroll.y > 0}>
+          {(transitionStyles) => (
+            <ActionIcon
+              style={transitionStyles}
+              onClick={() => scrollTo({ y: 0 })}
+              variant="filled"
+              size="xl"
+              radius="xl"
+              aria-label="맨 위로 이동"
+            >
+              <IconArrowUp style={{ width: rem(20), height: rem(20) }} />
+            </ActionIcon>
+          )}
+        </Transition>
+      </Affix>
     </Container>
   );
 };
